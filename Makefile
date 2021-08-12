@@ -4,7 +4,7 @@ tests_dir := $(CURDIR)/tests
 
 PYTHONPATH += $(source_dir)
 ENV_NAME ?= env
-make_venv = python -m venv $(ENV_NAME)
+make_venv = python3 -m venv $(ENV_NAME)
 env_dir = $(CURDIR)/$(ENV_NAME)
 bin_dir = $(env_dir)/bin
 activate_env = . $(bin_dir)/activate
