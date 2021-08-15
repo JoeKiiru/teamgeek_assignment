@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
 
@@ -10,7 +11,7 @@ posts = Blueprint("posts", __name__)
 @posts.route("/")
 def index():
     posts = Post.query.all()
-    return render_template("index.html", posts=posts)
+    return render_template("index.html", posts=posts, showFilter=True)
 
 
 @posts.route("/<int:post_id>")
@@ -73,3 +74,46 @@ def delete(post_id):
 
     flash('"{}" was successfully deleted!'.format(post.id))
     return redirect(url_for("posts.index"))
+
+@posts.route("/newest")
+def newest():
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+    return render_template("index.html", posts=posts, showFilter=True)
+
+@posts.route("/lasthour")
+def lasthour():
+    pastHour = datetime.now() - timedelta(hours=1)
+    posts = Post.query.filter(Post.created_at >= pastHour)
+    posts = posts.order_by(Post.created_at.desc())
+    return render_template("index.html", posts=posts, showFilter=True)
+
+@posts.route("/lastday")
+def lastday():
+    pastDay = datetime.now() - timedelta(days=1)
+    posts = Post.query.filter(Post.created_at >= pastDay)
+    posts = posts.order_by(Post.created_at.desc())
+    return render_template("index.html", posts=posts, showFilter=True) 
+
+@posts.route("/last7days")
+def last7days():
+    past7days = datetime.now() - timedelta(days=7)
+    posts = Post.query.filter(Post.created_at >= past7days)
+    posts = posts.order_by(Post.created_at.desc())
+    return render_template("index.html", posts=posts, showFilter=True)
+
+@posts.route("/lastmonth")
+def lastmonth():
+    pastMonth = datetime.now() - timedelta(months=1)
+    posts = Post.query.filter(Post.created_at >= pastMonth)
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+    posts = posts.order_by(Post.created_at.desc())
+    return render_template("index.html", posts=posts, showFilter=True)
+
+
+@posts.route("/lastyear")
+def lastyear():
+    pastYear = datetime.now() - timedelta(years=1)
+    posts = Post.query.filter(Post.created_at >= pastYear)
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+    posts = posts.order_by(Post.created_at.desc())
+    return render_template("index.html", posts=posts, showFilter=True)
