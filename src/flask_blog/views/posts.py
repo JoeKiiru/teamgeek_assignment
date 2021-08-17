@@ -103,17 +103,15 @@ def last7days():
 
 @posts.route("/lastmonth")
 def lastmonth():
-    pastMonth = datetime.now() - timedelta(months=1)
+    pastMonth = datetime.now() - timedelta(days=30)
     posts = Post.query.filter(Post.created_at >= pastMonth)
-    posts = Post.query.order_by(Post.created_at.desc()).all()
     posts = posts.order_by(Post.created_at.desc())
     return render_template("index.html", posts=posts, showFilter=True)
 
 
 @posts.route("/lastyear")
 def lastyear():
-    pastYear = datetime.now() - timedelta(years=1)
+    pastYear = datetime.now() - timedelta(days=365)
     posts = Post.query.filter(Post.created_at >= pastYear)
-    posts = Post.query.order_by(Post.created_at.desc()).all()
     posts = posts.order_by(Post.created_at.desc())
     return render_template("index.html", posts=posts, showFilter=True)
