@@ -24,14 +24,17 @@ def post(post_id):
             tag = request.form["tag"]
             
             add_tag = Tag.query.filter_by(tag=tag)
-            print(add_tag.first())
-            if not add_tag.first():
+            if add_tag.all():
+                if add_tag.first().post_id == post_id:
+                    flash("Tag already added!")
+                    return render_template("post.html", post=post)
+            else:
                 add_tag = Tag(tag = tag)
                 db.session.add(add_tag)
-                db.session.commit()
+                db.session.commit() 
             
-            # post.tag.append(add_tag)
-            # db.session.commit()
+            post.tags.append(add_tag)
+            db.session.commit()
             
     return render_template("post.html", post=post)
 
