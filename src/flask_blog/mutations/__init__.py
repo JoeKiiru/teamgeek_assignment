@@ -1,5 +1,5 @@
-from .posts import CreatePost
+from .posts import CreatePost, UpdatePost, DeletePost
 
 __all__ = [
-    "CreatePost",
+    "CreatePost", "UpdatePost", "DeletePost"
 ]
