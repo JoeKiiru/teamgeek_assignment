@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
 
 from ..database import db
-from ..models import Post
+from ..models import Post, Tag
 
 posts = Blueprint("posts", __name__)
 
@@ -14,11 +14,25 @@ def index():
     return render_template("index.html", posts=posts, showFilter=True)
 
 
-@posts.route("/<int:post_id>")
+@posts.route("/<int:post_id>", methods=("GET", "POST"))
 def post(post_id):
     post = Post.query.get(post_id)
     if not post:
         abort(404)
+    else:
+        if request.method == "POST":
+            tag = request.form["tag"]
+            
+            add_tag = Tag.query.filter_by(tag=tag)
+            print(add_tag.first())
+            if not add_tag.first():
+                add_tag = Tag(tag = tag)
+                db.session.add(add_tag)
+                db.session.commit()
+            
+            # post.tag.append(add_tag)
+            # db.session.commit()
+            
     return render_template("post.html", post=post)
 
 
