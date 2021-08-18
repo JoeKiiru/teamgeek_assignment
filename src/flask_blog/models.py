@@ -9,7 +9,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     content = db.Column(db.Text, nullable=False)
-    tags = db.relationship("Tag",  backref='posts', lazy=True)
+    post_tags = db.relationship("Tag",  backref='posts', lazy=True)
     created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
     updated_at = db.Column(db.DateTime, onupdate=datetime.now)
 
