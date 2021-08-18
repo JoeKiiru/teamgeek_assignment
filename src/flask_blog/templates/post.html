@@ -1,5 +1,13 @@
 {% extends 'base.html' %} {% block content %}
 <h2>{% block title %} {{ post.title }} {% endblock %}</h2>
 <span class="badge badge-primary">{{ post.created }}</span>
+<form method="POST">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+        </div>
+        <input name="tag" type="text" class="form-control" placeholder="Tag">
+        <button type="submit" class="btn btn-primary btn-sm">Add Tag</button>
+      </div>
+</form>
 <p>{{ post.content }}</p>
 {% endblock %}
