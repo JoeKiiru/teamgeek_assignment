@@ -33,7 +33,7 @@ def post(post_id):
                 db.session.add(add_tag)
                 db.session.commit() 
             
-            post.tags.append(add_tag)
+            post.post_tags.append(add_tag)
             db.session.commit()
             
     return render_template("post.html", post=post)
