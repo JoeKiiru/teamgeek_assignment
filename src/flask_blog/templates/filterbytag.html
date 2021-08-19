@@ -1,0 +1,6 @@
+<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+    <a class="dropdown-item" href="/" style="background-color: rgb(230, 17, 17);">Reset</a>
+    {% for tag in tags%}
+        <a class="dropdown-item" href="/filterbytag/{{tag.tag}}">{{tag.tag}}</a>
+    {% endfor %}
+</div>
