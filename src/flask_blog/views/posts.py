@@ -11,7 +11,14 @@ posts = Blueprint("posts", __name__)
 @posts.route("/")
 def index():
     posts = Post.query.all()
-    return render_template("index.html", posts=posts, showFilter=True)
+    tags = Tag.query.all()
+    return render_template(
+        "index.html", 
+        posts=posts, 
+        showFilterByCreation=True, 
+        showFilterByTag=True, 
+        tags=tags
+    )
 
 
 @posts.route("/<int:post_id>", methods=("GET", "POST"))
@@ -19,15 +26,17 @@ def post(post_id):
     post = Post.query.get(post_id)
     if not post:
         abort(404)
-    else:
-        if request.method == "POST":
+    elif request.method == "POST":
+            redirectUrl = ("/{0}").format(post_id)
             tag = request.form["tag"]
             
             add_tag = Tag.query.filter_by(tag=tag)
             if add_tag.all():
                 if add_tag.first().post_id == post_id:
                     flash("Tag already added!")
-                    return render_template("post.html", post=post)
+                    return redirect(redirectUrl)
+                else:
+                    add_tag = add_tag.first()
             else:
                 add_tag = Tag(tag = tag)
                 db.session.add(add_tag)
@@ -35,6 +44,8 @@ def post(post_id):
             
             post.post_tags.append(add_tag)
             db.session.commit()
+
+            return redirect(redirectUrl)
             
     return render_template("post.html", post=post)
 
@@ -92,43 +103,43 @@ def delete(post_id):
     flash('"{}" was successfully deleted!'.format(post.id))
     return redirect(url_for("posts.index"))
 
-@posts.route("/newest")
-def newest():
-    posts = Post.query.order_by(Post.created_at.desc()).all()
-    return render_template("index.html", posts=posts, showFilter=True)
 
-@posts.route("/lasthour")
-def lasthour():
-    pastHour = datetime.now() - timedelta(hours=1)
-    posts = Post.query.filter(Post.created_at >= pastHour)
-    posts = posts.order_by(Post.created_at.desc())
-    return render_template("index.html", posts=posts, showFilter=True)
+@posts.route("/filterbycreation/<string:filter_type>")
+def filter_by_creation(filter_type):
+    
+    if filter_type == "newest":
+        posts = Post.query.order_by(Post.created_at.desc()).all()
+    else:
+        pastTime = 0
+        if filter_type == "lasthour":
+            pastTime = datetime.now() - timedelta(hours=1)
+        elif filter_type == "lastday":
+            pastTime = datetime.now() - timedelta(days=1)
+        elif filter_type == "last7days":
+            pastTime = datetime.now() - timedelta(days=7)
+        elif filter_type == "lastmonth":
+            pastTime = datetime.now() - timedelta(days=30)
+        elif filter_type == "lastyear":
+            pastTime = datetime.now() - timedelta(days=365)
+        
+        posts = Post.query.filter(Post.created_at >= pastTime)
+        posts = posts.order_by(Post.created_at.desc())
 
-@posts.route("/lastday")
-def lastday():
-    pastDay = datetime.now() - timedelta(days=1)
-    posts = Post.query.filter(Post.created_at >= pastDay)
-    posts = posts.order_by(Post.created_at.desc())
-    return render_template("index.html", posts=posts, showFilter=True) 
-
-@posts.route("/last7days")
-def last7days():
-    past7days = datetime.now() - timedelta(days=7)
-    posts = Post.query.filter(Post.created_at >= past7days)
-    posts = posts.order_by(Post.created_at.desc())
-    return render_template("index.html", posts=posts, showFilter=True)
-
-@posts.route("/lastmonth")
-def lastmonth():
-    pastMonth = datetime.now() - timedelta(days=30)
-    posts = Post.query.filter(Post.created_at >= pastMonth)
-    posts = posts.order_by(Post.created_at.desc())
-    return render_template("index.html", posts=posts, showFilter=True)
+    return render_template(
+        "index.html", 
+        posts=posts, 
+        showFilterByCreation=True,
+    )
 
 
-@posts.route("/lastyear")
-def lastyear():
-    pastYear = datetime.now() - timedelta(days=365)
-    posts = Post.query.filter(Post.created_at >= pastYear)
-    posts = posts.order_by(Post.created_at.desc())
-    return render_template("index.html", posts=posts, showFilter=True)
+@posts.route("/filterbytag/<string:tag>")
+def filter_by_tag(tag):
+    posts = Post.query.filter(Post.post_tags.any(tag=tag)).all()
+    tags = Tag.query.all()
+
+    return render_template(
+        "index.html", 
+        posts=posts,
+        tags=tags, 
+        showFilterByTag=True
+    )
