@@ -42,12 +42,20 @@
               New Post
             </a>
           </li>
-          {% if showFilter %}
+          {% if showFilterByCreation or showFilterByTag %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-disabled="true">
+                Filter By Creation
+              </a>
+              {% include 'filterbycreation.html' %}
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Filter
+                Filter By Tag
               </a>
-              {% include 'filters.html' %}
+              {% with tags=tags %}
+                {% include 'filterbytag.html' %}
+              {% endwith %}
             </li>
           {% endif %}
         </ul>
