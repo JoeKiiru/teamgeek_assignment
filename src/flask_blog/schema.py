@@ -22,8 +22,9 @@ class Query(graphene.ObjectType):
         query = SQLAlchemyConnectionField.get_query(
             models.Post, info, *args, **kwargs
         )
-        tag_name = kwargs["tag"]
-        if tag_name:
+        
+        if "tag" in kwargs:
+            tag_name = kwargs["tag"]
             query = query.filter(models.Post.post_tags.any(tag=tag_name))
         
         return query.all()
