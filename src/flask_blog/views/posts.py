@@ -109,6 +109,8 @@ def filter_by_creation(filter_type):
     
     if filter_type == "newest":
         posts = Post.query.order_by(Post.created_at.desc()).all()
+    elif filter_type == "oldest":
+        posts = Post.query.order_by(Post.created_at.asc()).all()
     else:
         pastTime = 0
         if filter_type == "lasthour":
