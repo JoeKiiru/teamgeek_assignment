@@ -31,8 +31,9 @@ def post(post_id):
             tag = request.form["tag"]
             
             add_tag = Tag.query.filter_by(tag=tag)
+            
             if add_tag.all():
-                if add_tag.first().post_id == post_id:
+                if post.post_tags.filter_by(tag=tag).all():
                     flash("Tag already added!")
                     return redirect(redirectUrl)
                 else:
