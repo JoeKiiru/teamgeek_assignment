@@ -63,7 +63,7 @@ mutation {
     content: "Test content"
   }) {
     __typename
-    ... on CreatePostSuccess {
+    ... on PostSuccess {
       post {
         id
         title
@@ -88,7 +88,7 @@ mutation {
     content: "Update First Post content"
   }) {
     __typename
-    ... on UpdatePostSuccess {
+    ... on PostSuccess {
       post {
         id
         title
@@ -111,7 +111,7 @@ mutation {
     id: "UG9zdE5vZGU6NA=="
   }) {
     __typename
-    ... on DeletePostSuccess {
+    ... on PostSuccess {
       post {
         id
         title
