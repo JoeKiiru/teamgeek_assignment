@@ -15,8 +15,8 @@ def index():
     return render_template(
         "index.html", 
         posts=posts, 
-        showFilterByCreation=True, 
-        showFilterByTag=True, 
+        show_filter_by_creation=True, 
+        show_filter_by_tag=True, 
         tags=tags
     )
 
@@ -29,22 +29,24 @@ def post(post_id):
     elif request.method == "POST":
             redirectUrl = ("/{0}").format(post_id)
             tag = request.form["tag"]
-            
-            add_tag = Tag.query.filter_by(tag=tag)
-            
-            if add_tag.all():
-                if post.post_tags.filter_by(tag=tag).all():
-                    flash("Tag already added!")
-                    return redirect(redirectUrl)
-                else:
-                    add_tag = add_tag.first()
+            if not tag:
+                flash("Can not add an empty tag!")
+                return redirect(redirectUrl)
             else:
-                add_tag = Tag(tag = tag)
-                db.session.add(add_tag)
-                db.session.commit() 
-            
-            post.post_tags.append(add_tag)
-            db.session.commit()
+                add_tag = Tag.query.filter_by(tag=tag)
+                if add_tag.all():
+                    if post.post_tags.filter_by(tag=tag).all():
+                        flash("Tag already added!")
+                        return redirect(redirectUrl)
+                    else:
+                        add_tag = add_tag.first()
+                else:
+                    add_tag = Tag(tag = tag)
+                    db.session.add(add_tag)
+                    db.session.commit() 
+                
+                post.post_tags.append(add_tag)
+                db.session.commit()
 
             return redirect(redirectUrl)
             
@@ -131,7 +133,8 @@ def filter_by_creation(filter_type):
     return render_template(
         "index.html", 
         posts=posts, 
-        showFilterByCreation=True,
+        show_filter_by_creation=True,
+        reset_filter=True,
     )
 
 
@@ -144,5 +147,6 @@ def filter_by_tag(tag):
         "index.html", 
         posts=posts,
         tags=tags, 
-        showFilterByTag=True
+        show_filter_by_tag=True,
+        reset_filter=True,
     )
