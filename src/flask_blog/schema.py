@@ -29,40 +29,53 @@ class Query(graphene.ObjectType):
         query = SQLAlchemyConnectionField.get_query(
             models.Post, info, *args, **kwargs
         )
-        
-        if "tag" in kwargs:
-            tag_name = kwargs["tag"]
-            query = query.filter(models.Post.post_tags.any(tag=tag_name))
-        elif "createdAt" in kwargs:
-            filter_type = kwargs["createdAt"]
-            if filter_type == "newest":
-                query = models.Post.query.order_by(models.Post.created_at.desc())
-            elif filter_type == "oldest":
-                query = models.Post.query.order_by(models.Post.created_at.asc())
-            else:
-                pastTime = 0
-                if filter_type == "lasthour":
-                    pastTime = datetime.now() - timedelta(hours=1)
-                elif filter_type == "lastday":
-                    pastTime = datetime.now() - timedelta(days=1)
-                elif filter_type == "last7days":
-                    pastTime = datetime.now() - timedelta(days=7)
-                elif filter_type == "lastmonth":
-                    pastTime = datetime.now() - timedelta(days=30)
-                elif filter_type == "lastyear":
-                    pastTime = datetime.now() - timedelta(days=365)
-        
-                query = models.Post.query.filter(models.Post.created_at >= pastTime)
-                query = query.order_by(models.Post.created_at.desc())
-
+        get_filtered_posts = filter_post(kwargs)
+        if get_filtered_posts:
+            query = get_filtered_posts
         return query.all()
-    
+
+
     def resolve_tags(self, info, *args, **kwargs):
         query = SQLAlchemyConnectionField.get_query(
             models.Tag, info, *args, **kwargs
         )
         return query.all()
+
+def filter_post(filter_type):
+    posts = None
+    if "tag" in filter_type:
+        tag_name = filter_type["tag"]
+        posts = models.Post.query.filter(
+            models.Post.post_tags.any(tag=tag_name)
+        )
+    elif "createdAt" in filter_type:
+        time_filter = filter_type["createdAt"]
+        if time_filter == "newest":
+            posts = models.Post.query.order_by(
+                models.Post.created_at.desc()
+            )
+        elif time_filter == "oldest":
+            posts = models.Post.query.order_by(models.Post.created_at.asc())
+        else:
+            pastTime = 0
+            if time_filter == "lasthour":
+                pastTime = datetime.now() - timedelta(hours=1)
+            elif time_filter == "lastday":
+                pastTime = datetime.now() - timedelta(days=1)
+            elif time_filter == "last7days":
+                pastTime = datetime.now() - timedelta(days=7)
+            elif time_filter == "lastmonth":
+                pastTime = datetime.now() - timedelta(days=30)
+            elif time_filter == "lastyear":
+                pastTime = datetime.now() - timedelta(days=365)
     
+            posts = models.Post.query.filter(
+                models.Post.created_at >= pastTime
+            )
+            posts = posts.order_by(models.Post.created_at.desc())
+    
+    return posts
+
 class Mutation(graphene.ObjectType):
     create_post = mutations.CreatePost.Field()
     update_post = mutations.UpdatePost.Field()
