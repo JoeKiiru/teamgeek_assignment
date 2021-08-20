@@ -56,12 +56,12 @@ class UpdatePost(relay.ClientIDMutation):
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
         pk = from_global_id(input["id"])[1]
-        new_post = models.Post.query.get(pk)
-        new_post.title = input["title"]
-        new_post.content = input["content"]
+        post = models.Post.query.get(pk)
+        post.title = input["title"]
+        post.content = input["content"]
         db.session.commit()
 
-        return UpdatePostSuccess(post=new_post)
+        return UpdatePostSuccess(post=post)
 
 
 class DeletePostInput:
@@ -84,8 +84,9 @@ class DeletePost(relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
-        new_post = models.Post.query.get(int(input["id"]))
-        db.session.delete(new_post)
+        pk = from_global_id(input["id"])[1]
+        post = models.Post.query.get(pk)
+        db.session.delete(post)
         db.session.commit()
 
-        return DeletePostSuccess(post=new_post)
+        return DeletePostSuccess(post=post)
