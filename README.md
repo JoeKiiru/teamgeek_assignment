@@ -108,7 +108,7 @@ To delete a post via the GraphQL API execute the following mutation in GraphiQL:
 ```
 mutation {
   deletePost (input: {
-    id: "1"
+    id: "UG9zdE5vZGU6NA=="
   }) {
     __typename
     ... on DeletePostSuccess {
