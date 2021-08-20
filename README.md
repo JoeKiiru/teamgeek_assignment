@@ -83,7 +83,7 @@ To update a post via the GraphQL API execute the following mutation in GraphiQL:
 ```
 mutation {
   updatePost (input: {
-    id: "1"
+    id: "UG9zdE5vZGU6NA=="
     title: "First Post"
     content: "Update First Post content"
   }) {
