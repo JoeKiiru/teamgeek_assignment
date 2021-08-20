@@ -42,20 +42,31 @@
               New Post
             </a>
           </li>
-          {% if showFilterByCreation or showFilterByTag %}
+          {% if show_filter_by_tag or show_filter_by_creation %}
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-disabled="true">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Filter By Creation
               </a>
-              {% include 'filterbycreation.html' %}
+              {% if show_filter_by_creation %}
+                {% include 'filterbycreation.html' %}
+              {% endif %}
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Filter By Tag
               </a>
-              {% with tags=tags %}
-                {% include 'filterbytag.html' %}
-              {% endwith %}
+              {% if tags and show_filter_by_tag %}
+                {% with tags=tags %}
+                  {% include 'filterbytag.html' %}
+                {% endwith %}
+              {% endif %}
+            </li>
+          {% endif %}
+          {% if reset_filter %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('posts.index') }}">
+                Reset Filter
+              </a>
             </li>
           {% endif %}
         </ul>
