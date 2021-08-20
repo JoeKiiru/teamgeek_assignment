@@ -6,23 +6,23 @@ from .. import models, types
 from ..database import db
 
 
+class PostSuccess(graphene.ObjectType):
+    post = graphene.Field(types.PostNode, required=True)
+
+
+class PostOutput(graphene.Union):
+    class Meta:
+        types = (PostSuccess,)
+
+
 class CreatePostInput:
     title = graphene.String(required=True)
     content = graphene.String(required=True)
 
 
-class CreatePostSuccess(graphene.ObjectType):
-    post = graphene.Field(types.PostNode, required=True)
-
-
-class CreatePostOutput(graphene.Union):
-    class Meta:
-        types = (CreatePostSuccess,)
-
-
 class CreatePost(relay.ClientIDMutation):
     Input = CreatePostInput
-    Output = CreatePostOutput
+    Output = PostOutput
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
@@ -31,7 +31,7 @@ class CreatePost(relay.ClientIDMutation):
         db.session.add(new_post)
         db.session.commit()
 
-        return CreatePostSuccess(post=new_post)
+        return PostSuccess(post=new_post)
 
 
 class UpdatePostInput:
@@ -40,18 +40,9 @@ class UpdatePostInput:
     content = graphene.String(required=True)
 
 
-class UpdatePostSuccess(graphene.ObjectType):
-    post = graphene.Field(types.PostNode, required=True)
-
-
-class UpdatePostOutput(graphene.Union):
-    class Meta:
-        types = (UpdatePostSuccess,)
-
-
 class UpdatePost(relay.ClientIDMutation):
     Input = UpdatePostInput
-    Output = UpdatePostOutput
+    Output = PostOutput
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
@@ -61,26 +52,16 @@ class UpdatePost(relay.ClientIDMutation):
         post.content = input["content"]
         db.session.commit()
 
-        return UpdatePostSuccess(post=post)
+        return PostSuccess(post=post)
 
 
 class DeletePostInput:
     id = graphene.String(required=True)
 
 
-class DeletePostSuccess(graphene.ObjectType):
-    post = graphene.Field(types.PostNode, required=True)
-
-
-
-class DeletePostOutput(graphene.Union):
-    class Meta:
-        types = (DeletePostSuccess,)
-
-
 class DeletePost(relay.ClientIDMutation):
     Input = DeletePostInput
-    Output = DeletePostOutput
+    Output = PostOutput
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
@@ -89,4 +70,4 @@ class DeletePost(relay.ClientIDMutation):
         db.session.delete(post)
         db.session.commit()
 
-        return DeletePostSuccess(post=post)
+        return PostSuccess(post=post)
