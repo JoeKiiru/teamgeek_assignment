@@ -6,6 +6,13 @@
     <a href="{{ url_for('posts.post', post_id=post.id) }}">
       <h2>{{ post.title }}</h2>
     </a>
+    <div class="form-group row mb-3">
+      <div class="col">
+        {% for tag in post.post_tags %}
+          <span class="badge badge-success">{{tag.tag}}</span>
+        {% endfor %}
+      </div>
+    </div>
     <span class="badge badge-primary">{{ post.created_at }}</span>
     <a href="{{ url_for('posts.edit', post_id=post.id) }}">
       <span class="badge badge-warning">Edit</span>
