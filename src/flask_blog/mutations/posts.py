@@ -1,5 +1,6 @@
 import graphene
 from graphene import relay
+from graphql_relay.node.node import from_global_id
 
 from .. import models, types
 from ..database import db
@@ -54,7 +55,8 @@ class UpdatePost(relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
-        new_post = models.Post.query.get(int(input["id"]))
+        pk = from_global_id(input["id"])[1]
+        new_post = models.Post.query.get(pk)
         new_post.title = input["title"]
         new_post.content = input["content"]
         db.session.commit()
