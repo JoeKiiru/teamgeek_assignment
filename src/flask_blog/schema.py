@@ -30,8 +30,13 @@ class Query(graphene.ObjectType):
             models.Post, info, *args, **kwargs
         )
         get_filtered_posts = filter_post(kwargs)
+        print(get_filtered_posts)
         if get_filtered_posts:
-            query = get_filtered_posts
+            if "Invalid" == get_filtered_posts:
+                query = []
+                return query
+            else:
+                query = get_filtered_posts
         return query.all()
 
 
@@ -68,6 +73,8 @@ def filter_post(filter_type):
                 pastTime = datetime.now() - timedelta(days=30)
             elif time_filter == "lastyear":
                 pastTime = datetime.now() - timedelta(days=365)
+            else:
+                return "Invalid"
     
             posts = models.Post.query.filter(
                 models.Post.created_at >= pastTime
