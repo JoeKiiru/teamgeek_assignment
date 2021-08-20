@@ -76,6 +76,54 @@ mutation {
 }
 ```
 
+### Update a post
+
+To update a post via the GraphQL API execute the following mutation in GraphiQL:
+
+```
+mutation {
+  updatePost (input: {
+    id: "1"
+    title: "First Post"
+    content: "Update First Post content"
+  }) {
+    __typename
+    ... on UpdatePostSuccess {
+      post {
+        id
+        title
+        content
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+```
+
+### Delete a post
+
+To delete a post via the GraphQL API execute the following mutation in GraphiQL:
+
+```
+mutation {
+  deletePost (input: {
+    id: "1"
+  }) {
+    __typename
+    ... on DeletePostSuccess {
+      post {
+        id
+        title
+        content
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+```
+
 ### Fetch all posts
 
 To fetch all posts execute the following query in GraphiQL:
@@ -94,6 +142,61 @@ To fetch all posts execute the following query in GraphiQL:
   }
 }
 ```
+
+### Filter posts by tag
+
+To fetch all posts execute the following query in GraphiQL:
+
+```
+{
+  posts(tag: "Tag") {
+    edges {
+      node {
+        id
+        title
+        content
+        createdAt
+        postTags {
+          edges {
+            node {
+              id
+              tag
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Filter posts by created date
+
+To fetch all posts execute the following query in GraphiQL:
+
+```
+{
+  posts(createdAt: filter_type) {
+    edges {
+      node {
+        id
+        title
+        content
+        createdAt
+        postTags {
+          edges {
+            node {
+              id
+              tag
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+Where filter type is one of the following: "newest", "oldest", "lasthour", "lastday", "last7days", "lastmonth", "lastyear"
 
 ## What you need to do
 
